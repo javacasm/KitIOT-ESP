@@ -1,9 +1,5 @@
 # Referencias
 
-# KitIOT-ESP
-
-## Referencias
-
 ### IOT
 
 [Intenet of thing](https://www.instructables.com/class/Internet-of-Things-Class/)
