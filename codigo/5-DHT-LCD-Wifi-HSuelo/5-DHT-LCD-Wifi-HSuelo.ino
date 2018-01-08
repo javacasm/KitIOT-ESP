@@ -1,5 +1,5 @@
 /*
- * 
+ *
  * Basado en el ejemplo de @Adafruit
 // DHT Temperature & Humidity Sensor
 // Unified Sensor Library Example
@@ -34,7 +34,7 @@
 #define DHTPIN            D5         // Pin which is connected to the DHT sensor.
 
 // Uncomment the type of sensor in use:
-//#define DHTTYPE           DHT11     // DHT 11 
+//#define DHTTYPE           DHT11     // DHT 11
 #define DHTTYPE           DHT22     // DHT 22 (AM2302)
 //#define DHTTYPE           DHT21     // DHT 21 (AM2301)
 
@@ -42,7 +42,7 @@
 
 #define PUERTO_SERVER 80
 
-#define LED_WIFI D2 
+#define LED_WIFI D2
 
 /* ==== END Defines ==== */
 
@@ -58,8 +58,8 @@ LiquidCrystal_I2C_ESP lcd(0x27, 16, 2);
 
 // Wifi
 
-const char* ssid = "OpenWrt";
-const char* password = "qazxcvbgtrewsdf";
+const char* ssid = "RED_WIFI";
+const char* password = "PASSWORD_WIFI";
 
 ESP8266WebServer server(PUERTO_SERVER);
 
@@ -89,7 +89,7 @@ void setup_DHT(){
   Serial.print  ("Unique ID:    "); Serial.println(sensor.sensor_id);
   Serial.print  ("Max Value:    "); Serial.print(sensor.max_value); Serial.println(" *C");
   Serial.print  ("Min Value:    "); Serial.print(sensor.min_value); Serial.println(" *C");
-  Serial.print  ("Resolution:   "); Serial.print(sensor.resolution); Serial.println(" *C");  
+  Serial.print  ("Resolution:   "); Serial.print(sensor.resolution); Serial.println(" *C");
   Serial.println("------------------------------------");
   // Print humidity sensor details.
   dht.humidity().getSensor(&sensor);
@@ -100,7 +100,7 @@ void setup_DHT(){
   Serial.print  ("Unique ID:    "); Serial.println(sensor.sensor_id);
   Serial.print  ("Max Value:    "); Serial.print(sensor.max_value); Serial.println("%");
   Serial.print  ("Min Value:    "); Serial.print(sensor.min_value); Serial.println("%");
-  Serial.print  ("Resolution:   "); Serial.print(sensor.resolution); Serial.println("%");  
+  Serial.print  ("Resolution:   "); Serial.print(sensor.resolution); Serial.println("%");
   Serial.println("------------------------------------");
   // Set delay between sensor readings based on sensor details.
   delayMS = sensor.min_delay / 1000;
@@ -166,9 +166,9 @@ void setup() {
 /* ==== Loop ==== */
 
 void lee_Datos(){
-  
+
     // Get temperature event and print its value.
-  sensors_event_t event;  
+  sensors_event_t event;
   dht.temperature().getEvent(&event);
   fTemperatura=event.temperature;
 
@@ -203,7 +203,7 @@ void show_Datos(){
     lcd.setCursor(0,1);
     lcd.print("H:");
     lcd.print(fHumedad);
-    lcd.print("%  ");   
+    lcd.print("%  ");
   }
   Serial.print("Humedad Suelo: ");
   Serial.println(iHumedadSuelo);
@@ -216,9 +216,9 @@ void show_Datos(){
 void loop() {
   // Delay between measurements.
   delay(delayMS);
-  
+
   lee_Datos();
-  
+
   show_Datos();
   // Wifi
   server.handleClient();
