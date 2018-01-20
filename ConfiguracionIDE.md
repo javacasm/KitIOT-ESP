@@ -28,3 +28,10 @@ Ahora tendremos disponibles las tarjetas de tipo esp8266
 
 
 ![Tarjetas ESP](./images/TarjetasESP.png)
+
+
+Seleccionamos NodeMCU 1.0
+
+Ahora tendremos mucho ejemplos de la nueva plataforma
+
+![EjemplosESP](./images/EjemplosESP.png)
