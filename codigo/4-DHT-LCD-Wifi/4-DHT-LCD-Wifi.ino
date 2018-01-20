@@ -13,6 +13,8 @@
 
 
 /* ==== Includes ==== */
+#include "config.h"
+
 // Include para lcd
 #include <Wire.h>
 #include <LiquidCrystal_I2C_ESP.h>
@@ -57,9 +59,9 @@ uint32_t delayMS;
 LiquidCrystal_I2C_ESP lcd(0x27, 16, 2);
 
 // Wifi
+extern const char* ssid;
+extern const char* password;
 
-const char* ssid = "RED_WIFI";
-const char* password = "PASSWORD_WIFI";
 
 ESP8266WebServer server(PUERTO_SERVER);
 
