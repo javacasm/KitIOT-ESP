@@ -13,7 +13,7 @@
 
 
 /* ==== Includes ==== */
-#include "config.h"
+#include "Config.h"
 
 // Include para lcd
 #include <Wire.h>
@@ -120,38 +120,56 @@ void setup_led(){
   pinMode(LED_WIFI,OUTPUT);
 }
 
+void mensaje(String strMensaje){
+  Serial.println(strMensaje);
+  lcd.println(strMensaje);
+}
+
 void setup_wifi(){
   WiFi.begin(ssid, password);
-      // Wait for connection
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
+  mensaje(String("Conectando wifi a ")+ssid);
+
+  int iReintentos=0;
+  while (WiFi.status() != WL_CONNECTED) {     // Wait for connection
+    delay(1000);
     Serial.print(".");
+    iReintentos++;
+    if(iReintentos>50) {
+      mensaje("Dejamos de intentarlo");
+      break;
+    }
   }
 
-  Serial.println("");
-  Serial.print("Connected to ");
-  Serial.println(ssid);
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());
-  lcd.setCursor(3,1);
-  lcd.print(WiFi.localIP());
-  lcd.setCursor(10,1);
-  lcd.print("IP:");
-
-  if (MDNS.begin("esp8266")) {
-    Serial.println("MDNS responder started");
+  if (WiFi.status() == WL_CONNECTED) {
+    lcd.clear();
+    Serial.println("");
+    Serial.print("Connected to ");
+    Serial.println(ssid);
+    Serial.print("IP address: ");
+    Serial.println(WiFi.localIP());
+    lcd.setCursor(3,1);
+    lcd.print(WiFi.localIP());
+    lcd.setCursor(10,1);
+    lcd.print("IP:");
+  
+    if (MDNS.begin("esp8266")) {
+      Serial.println("MDNS responder started");
+    }
+  
+    server.on("/", handleRoot);
+  
+    server.on("/inline", [](){
+      server.send(200, "text/plain", "this works as well");
+    });
+  
+    server.onNotFound(handleNotFound);
+  
+    server.begin();
+    Serial.println("HTTP server started");
+  } else {
+    lcd.clear();
   }
-
-  server.on("/", handleRoot);
-
-  server.on("/inline", [](){
-    server.send(200, "text/plain", "this works as well");
-  });
-
-  server.onNotFound(handleNotFound);
-
-  server.begin();
-  Serial.println("HTTP server started");
+  
 }
 
 void setup() {
