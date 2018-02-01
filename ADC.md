@@ -27,7 +27,9 @@
 
 [Libreria xreef para arduino/ESP](https://github.com/xreef/PCF8591_library)
 
+[Detalles del código en python de control del PCF8561](https://raspberrypi.stackexchange.com/questions/36983/how-to-change-read-channels-on-pcf8591)
 
+[Código en C y python y detalles PCF8561](https://www.sunfounder.com/learn/sensor-kit-v2-0-for-raspberry-pi-b-plus/lesson-13-pcf8591-sensor-kit-v2-0-for-b-plus.html)
 ## MCP3424
 
 Librerias
