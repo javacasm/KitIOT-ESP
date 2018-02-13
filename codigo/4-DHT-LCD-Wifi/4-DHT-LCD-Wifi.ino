@@ -13,7 +13,7 @@
 
 
 /* ==== Includes ==== */
-#include "Config.h"
+#include "Config.h"   // Configuración del wifi
 
 // Include para lcd
 #include <Wire.h>
@@ -151,25 +151,25 @@ void setup_wifi(){
     lcd.print(WiFi.localIP());
     lcd.setCursor(10,1);
     lcd.print("IP:");
-  
+
     if (MDNS.begin("esp8266")) {
       Serial.println("MDNS responder started");
     }
-  
+
     server.on("/", handleRoot);
-  
+
     server.on("/inline", [](){
       server.send(200, "text/plain", "this works as well");
     });
-  
+
     server.onNotFound(handleNotFound);
-  
+
     server.begin();
     Serial.println("HTTP server started");
   } else {
     lcd.clear();
   }
-  
+
 }
 
 void setup() {
