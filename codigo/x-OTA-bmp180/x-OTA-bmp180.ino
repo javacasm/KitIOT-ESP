@@ -4,6 +4,7 @@
 
  // Wemos BMP180 shield https://github.com/wemos/D1_mini_Examples/blob/master/examples/03.Sensors/BMP180_BMP085/BMP180_BMP085.ino
 
+#include "Config.h"   // Configuración del wifi
 
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
@@ -17,12 +18,12 @@ Adafruit_BMP085 bmp;
 
 #include <JeVe_EasyOTA.h>  // https://github.com/jeroenvermeulen/JeVe_EasyOTA/blob/master/JeVe_EasyOTA.h
 
-#define WIFI_SSID        "xxxx"
-#define WIFI_PASSWORD    "xxxxx"
 #define ARDUINO_HOSTNAME "ota-wemos-caldera"
 
 ESP8266WebServer server(80);
 
+extern  char* ssid;
+extern  char* password;
 
 long blink_period;
 
@@ -34,7 +35,7 @@ void setup() {
   OTA.onMessage([](char *message, int line) {
     Serial.println(message);
   });
-  OTA.setup(WIFI_SSID, WIFI_PASSWORD, ARDUINO_HOSTNAME);
+  OTA.setup(ssid, password, ARDUINO_HOSTNAME);
 
   randomSeed(analogRead(0));
   blink_period=random(100,1000);
