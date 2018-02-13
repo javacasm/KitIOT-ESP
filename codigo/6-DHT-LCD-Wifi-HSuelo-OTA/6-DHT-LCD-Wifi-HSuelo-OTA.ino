@@ -13,6 +13,8 @@
 
 
 /* ==== Includes ==== */
+#include "Config.h"   // Configuración del wifi
+
 // OTA
 #include <JeVe_EasyOTA.h>  // https://github.com/jeroenvermeulen/JeVe_EasyOTA/blob/master/JeVe_EasyOTA.h
 
@@ -62,8 +64,8 @@ LiquidCrystal_I2C_ESP lcd(0x27, 16, 2);
 
 // Wifi
 
-char* ssid = "XXXXX";
-char* password = "XXXXX";
+extern  char* ssid;
+extern  char* password;
 char* arduino_hostname = "ota-nodeMCU-Kit";
 
 ESP8266WebServer server(PUERTO_SERVER);
