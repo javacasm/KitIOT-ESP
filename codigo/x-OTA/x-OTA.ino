@@ -1,13 +1,16 @@
 /*
  * To start mDNS monitor (OSX) exec:   dns-sd -B _arduino._tcp
  */
+#include "Config.h"   // Configuración del wifi
 
 #include <JeVe_EasyOTA.h>  // https://github.com/jeroenvermeulen/JeVe_EasyOTA/blob/master/JeVe_EasyOTA.h
 
-#define WIFI_SSID        "xxxxx"
-#define WIFI_PASSWORD    "xxxxx"
+
 #define ARDUINO_HOSTNAME "ota-wemos-caldera"
 
+
+extern  char* ssid;
+extern  char* password;
 
 
 long blink_period;
@@ -20,7 +23,7 @@ void setup() {
   OTA.onMessage([](char *message, int line) {
     Serial.println(message);
   });
-  OTA.setup(WIFI_SSID, WIFI_PASSWORD, ARDUINO_HOSTNAME);
+  OTA.setup(ssid, password, ARDUINO_HOSTNAME);
 
   randomSeed(analogRead(0));
   blink_period=random(100,1000);
