@@ -13,6 +13,7 @@
 
 
 /* ==== Includes ==== */
+#include "Config.h"   // Configuración del wifi
 // Include para lcd
 #include <Wire.h>
 #include <LiquidCrystal_I2C_ESP.h>
@@ -58,8 +59,8 @@ LiquidCrystal_I2C_ESP lcd(0x27, 16, 2);
 
 // Wifi
 
-const char* ssid = "RED_WIFI";
-const char* password = "PASSWORD_WIFI";
+extern const char* ssid;
+extern const char* password;
 
 ESP8266WebServer server(PUERTO_SERVER);
 
