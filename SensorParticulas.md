@@ -17,3 +17,7 @@
 [Proyecto sencillo](http://www.howmuchsnow.com/arduino/airquality/grovedust/)
 
 [Proyecto muy sencillo con lcd](https://funprojects.blog/2017/05/31/dust-monitor/)
+
+[Proyecto 2](http://arduinoairpollution.altervista.org/progetto/)
+
+[Proyecto muy detallado](https://chatbotbook.com/an-internet-connected-portable-air-quality-monitor-for-35-946d200ebd51)
