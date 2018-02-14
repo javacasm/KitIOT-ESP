@@ -74,8 +74,10 @@ void setup() {
   Serial.println("HTTP server started");
 }
 
+String strPage;
+
 const char * getRootPage(){
-  String strPage = strTemp + "<br>" +
+  strPage = strTemp + "<br>" +
                     strPrea + "<br>" +
                     strAlt;
   return strPage.c_str();
@@ -83,10 +85,7 @@ const char * getRootPage(){
 
 void handleRoot() {
   digitalWrite(LED_BUILTIN, HIGH);
-  
-                    
   server.send(200, "text/plain", getRootPage());
-  
   digitalWrite(LED_BUILTIN, LOW);
 }
 
@@ -106,7 +105,7 @@ void handleNotFound(){
   server.send(404, "text/plain", message);
     digitalWrite(LED_BUILTIN, LOW);
 }
-
+// Get data from the sensor
 void getData(){
   temp = bmp.readTemperature();
   preassure = bmp.readPressure();
@@ -115,7 +114,7 @@ void getData(){
   altitude =  bmp.readAltitude();
 }
 
-
+// Convert numerical to text data
 void getStringData(){
   getData();
   strTemp = String("Temperatura = ") + temp + " °C";
@@ -123,22 +122,25 @@ void getStringData(){
   strAlt = String("Altitud = ")+altitude + " metros";
 }
 
-
+// Show data over serial
 void showData(){
-  
   Serial.println(strTemp);
   Serial.println(strPrea);
   Serial.println(strAlt);
 }
 
-
-
 void loop() {
+  
+  // OTA
   OTA.loop();
+  
+  // Blink
   if(millis()-last_blink>blink_period){
     digitalWrite(LED_BUILTIN,!digitalRead(LED_BUILTIN));
     last_blink=millis();
   }
+  
+  // Data
   if(millis()-last_data>data_period){
     digitalWrite(LED_BUILTIN,!digitalRead(LED_BUILTIN));
     getStringData();
@@ -146,9 +148,7 @@ void loop() {
     last_data=millis();
   }
 
-  
-
-
+  // Webserver
   server.handleClient();
   
 }
