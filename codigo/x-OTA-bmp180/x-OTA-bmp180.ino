@@ -1,8 +1,4 @@
-/*
- * To start mDNS monitor (OSX) exec:   dns-sd -B _arduino._tcp
- */
-
- // Wemos BMP180 shield https://github.com/wemos/D1_mini_Examples/blob/master/examples/03.Sensors/BMP180_BMP085/BMP180_BMP085.ino
+// Wemos BMP180 shield https://github.com/wemos/D1_mini_Examples/blob/master/examples/03.Sensors/BMP180_BMP085/BMP180_BMP085.ino
 
 #include "Config.h"   // Configuración del wifi
 
@@ -19,6 +15,8 @@ Adafruit_BMP085 bmp;
 #include <JeVe_EasyOTA.h>  // https://github.com/jeroenvermeulen/JeVe_EasyOTA/blob/master/JeVe_EasyOTA.h
 
 #define ARDUINO_HOSTNAME "ota-wemos-caldera"
+
+#define MAX_PAGE_LENGTH 1000
 
 ESP8266WebServer server(80);
 
@@ -46,24 +44,27 @@ void setup() {
   });
   OTA.setup(ssid, password, ARDUINO_HOSTNAME);
 
+  // Para aleatorizar mas
   randomSeed(analogRead(0));
+
+  // definimos el periodo de parpadeo
   blink_period=random(100,1000);
 
   pinMode(LED_BUILTIN,OUTPUT);
 
-//  if (!bmp.begin()) {
-//    Serial.println("Could not find BMP180 or BMP085 sensor at 0x77");
-//    while (1) {
-//      digitalWrite(LED_BUILTIN,!digitalRead(LED_BUILTIN));
-//      Serial.println("Could not find BMP180 or BMP085 sensor at 0x77");
-//      delay(50);
-//     }
-//  }
+  if (!bmp.begin()) {
+    Serial.println("Could not find BMP180 or BMP085 sensor at 0x77");
+    while (1) {
+      digitalWrite(LED_BUILTIN,!digitalRead(LED_BUILTIN));
+      Serial.println("Could not find BMP180 or BMP085 sensor at 0x77");
+      delay(50);
+     }
+  }
 
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
-   server.on("/", handleRoot);
-
+     server.on("/", handleRoot);
+  server.on ( "/test.svg", drawGraph );
   server.on("/inline", [](){
     server.send(200, "text/plain", getRootPage());
   });
@@ -74,18 +75,63 @@ void setup() {
   Serial.println("HTTP server started");
 }
 
-String strPage;
-
+char pageBuffer[MAX_PAGE_LENGTH];
+String strTitle = "BMP180 Datos atmosfericos";
 const char * getRootPage(){
-  strPage = strTemp + "<br>" +
+
+  String strBody = strTemp + "<br>" +
                     strPrea + "<br>" +
                     strAlt;
-  return strPage.c_str();
+
+ 
+  int sec = millis() / 1000;
+  int min = sec / 60;
+  int hr = min / 60;
+
+  snprintf ( pageBuffer, MAX_PAGE_LENGTH,
+
+"<html>\
+  <head>\
+    <meta http-equiv='refresh' content='5'/>\
+    <title>%s</title>\
+    <style>\
+      body { background-color: #cccccc; font-family: Arial, Helvetica, Sans-Serif; Color: #000088; }\
+    </style>\
+  </head>\
+  <body>\
+    %s\
+    <p>Uptime: %02d:%02d:%02d</p>\
+    <img src=\"/test.svg\" />\
+  </body>\
+</html>",
+
+    strTitle.c_str(),strBody.c_str(),hr, min % 60, sec % 60
+  );
+
+  return pageBuffer;
+}
+
+void drawGraph() {
+  String out = "";
+  char temp[100];
+  out += "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" width=\"400\" height=\"150\">\n";
+  out += "<rect width=\"400\" height=\"150\" fill=\"rgb(250, 230, 210)\" stroke-width=\"1\" stroke=\"rgb(0, 0, 0)\" />\n";
+  out += "<g stroke=\"black\">\n";
+  int y = rand() % 130;
+  for (int x = 10; x < 390; x+= 10) {
+    int y2 = rand() % 130;
+    sprintf(temp, "<line x1=\"%d\" y1=\"%d\" x2=\"%d\" y2=\"%d\" stroke-width=\"1\" />\n", x, 140 - y, x + 10, 140 - y2);
+    out += temp;
+    y = y2;
+  }
+  out += "</g>\n</svg>\n";
+
+  server.send ( 200, "image/svg+xml", out);
 }
 
 void handleRoot() {
   digitalWrite(LED_BUILTIN, HIGH);
-  server.send(200, "text/plain", getRootPage());
+  server.send(200, "text/HTML", getRootPage());
   digitalWrite(LED_BUILTIN, LOW);
 }
 
@@ -102,9 +148,10 @@ void handleNotFound(){
   for (uint8_t i=0; i<server.args(); i++){
     message += " " + server.argName(i) + ": " + server.arg(i) + "\n";
   }
-  server.send(404, "text/plain", message);
+  server.send(404, "text/HTML", message);
     digitalWrite(LED_BUILTIN, LOW);
 }
+
 // Get data from the sensor
 void getData(){
   temp = bmp.readTemperature();
@@ -115,9 +162,8 @@ void getData(){
 }
 
 // Convert numerical to text data
-void getStringData(){
-  getData();
-  strTemp = String("Temperatura = ") + temp + " °C";
+void formatData(){
+  strTemp = String("Temperatura = ") + temp + " C";
   strPrea = String("Presion = ") + preassure + " Pa";
   strAlt = String("Altitud = ")+altitude + " metros";
 }
@@ -143,9 +189,11 @@ void loop() {
   // Data
   if(millis()-last_data>data_period){
     digitalWrite(LED_BUILTIN,!digitalRead(LED_BUILTIN));
-    getStringData();
+    getData();
+    formatData();
     showData();
     last_data=millis();
+    digitalWrite(LED_BUILTIN,!digitalRead(LED_BUILTIN));
   }
 
   // Webserver
