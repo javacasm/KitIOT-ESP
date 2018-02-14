@@ -28,7 +28,7 @@ extern  char* password;
 long blink_period;
 long last_blink = millis();
 
-long data_period = 1000;
+long data_period = 500;
 long last_data = millis();
 
 
@@ -121,13 +121,17 @@ void drawGraph() {
   char temp[100];
   int iWidth = 400 ;
   int iHeight = 140 ;
-  out += "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" width=\"400\" height=\"150\">\n";
-  out += "<rect width=\"400\" height=\"150\" fill=\"rgb(250, 230, 210)\" stroke-width=\"1\" stroke=\"rgb(0, 0, 0)\" />\n";
+  int iMargin = 10 ;
+  sprintf(temp , "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" width=\"%d\" height=\"%d\">\n",iWidth,iHeight);
+  out += temp;
+  sprintf(temp , "<rect width=\"%d\" height=\"%d\" fill=\"rgb(250, 230, 210)\" stroke-width=\"1\" stroke=\"rgb(0, 0, 0)\" />\n",iWidth,iHeight);
+  out += temp; 
   out += "<g stroke=\"black\">\n";
-  int y = map(TempData.getValue(0),TempData.minValue,TempData.maxValue,0,iHeight);
-  for (int x = 10; x < 390; x+= 10) {
-    int y2 = map(TempData.getValue(x/10),TempData.minValue,TempData.maxValue,0,iHeight);;
-    sprintf(temp, "<line x1=\"%d\" y1=\"%d\" x2=\"%d\" y2=\"%d\" stroke-width=\"1\" />\n", x, iHeight - y, x + 10, iHeight - y2);
+  int y = map(TempData.getValue(0),TempData.minValue,TempData.maxValue,0,iHeight - 10);
+  int step = ( iWidth - 2 * iMargin ) / NData ;
+  for (int x = iMargin, i = 0; x <= iWidth - iMargin; x += step, i++) {
+    int y2 = map(TempData.getValue(i),TempData.minValue,TempData.maxValue,0,iHeight - iMargin);
+    sprintf(temp, "<line x1=\"%d\" y1=\"%d\" x2=\"%d\" y2=\"%d\" stroke-width=\"1\" />\n", x, iHeight - y, x + iMargin, iHeight - y2);
     out += temp;
     y = y2;
   }
