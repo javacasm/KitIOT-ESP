@@ -26,6 +26,15 @@ extern  char* ssid;
 extern  char* password;
 
 long blink_period;
+long last_blink = millis();
+
+long data_period;
+long last_data = millis();
+
+
+float temp, preassure, altitude;
+
+String strTemp, strPrea, strAlt;
 
 EasyOTA OTA;
 
@@ -56,7 +65,7 @@ void setup() {
    server.on("/", handleRoot);
 
   server.on("/inline", [](){
-    server.send(200, "text/plain", "this works as well");
+    server.send(200, "text/plain", getRootPage());
   });
 
   server.onNotFound(handleNotFound);
@@ -65,9 +74,19 @@ void setup() {
   Serial.println("HTTP server started");
 }
 
+const char * getRootPage(){
+  String strPage = strTemp + "<br>" +
+                    strPrea + "<br>" +
+                    strAlt;
+  return strPage.c_str();
+}
+
 void handleRoot() {
   digitalWrite(LED_BUILTIN, HIGH);
-  server.send(200, "text/plain", "hello from esp8266!");
+  
+                    
+  server.send(200, "text/plain", getRootPage());
+  
   digitalWrite(LED_BUILTIN, LOW);
 }
 
@@ -88,50 +107,48 @@ void handleNotFound(){
     digitalWrite(LED_BUILTIN, LOW);
 }
 
-float temp;
-float preassure;
-float altitude;
-void gedData(){
-  temp=bmp.readTemperature();
-}
-void showTemp(){
-  Serial.println(String("Temperature = ")+temp+" °C");
-
-
-  Serial.print("Pressure = ");
-  Serial.print(bmp.readPressure());
-  Serial.println(" Pa");
-
+void getData(){
+  temp = bmp.readTemperature();
+  preassure = bmp.readPressure();
   // Calculate altitude assuming 'standard' barometric
   // pressure of 1013.25 millibar = 101325 Pascal
-  Serial.print("Altitude = ");
-  Serial.print(bmp.readAltitude());
-  Serial.println(" meters");
-
-  Serial.print("Pressure at sea level (calculated) = ");
-  Serial.print(bmp.readSealevelPressure());
-  Serial.println(" Pa");
-
-  // you can get a more precise measurement of altitude
-  // if you know the current sea level pressure which will
-  // vary with weather and such. If it is 1015 millibars
-  // that is equal to 101500 Pascals.
-  Serial.print("Real altitude = ");
-  Serial.print(bmp.readAltitude(101500));
-  Serial.println(" meters");
-
-  Serial.println();
-  delay(100);
+  altitude =  bmp.readAltitude();
 }
 
-long last=millis();
+
+void getStringData(){
+  getData();
+  strTemp = String("Temperatura = ") + temp + " °C";
+  strPrea = String("Presion = ") + preassure + " Pa";
+  strAlt = String("Altitud = ")+altitude + " metros";
+}
+
+
+void showData(){
+  
+  Serial.println(strTemp);
+  Serial.println(strPrea);
+  Serial.println(strAlt);
+}
+
+
+
 void loop() {
   OTA.loop();
-  if(millis()-last>blink_period){
+  if(millis()-last_blink>blink_period){
     digitalWrite(LED_BUILTIN,!digitalRead(LED_BUILTIN));
-    last=millis();
+    last_blink=millis();
   }
-  showTemp();
+  if(millis()-last_data>data_period){
+    digitalWrite(LED_BUILTIN,!digitalRead(LED_BUILTIN));
+    getStringData();
+    showData();
+    last_data=millis();
+  }
+
+  
+
 
   server.handleClient();
+  
 }
