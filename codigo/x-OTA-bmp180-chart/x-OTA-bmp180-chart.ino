@@ -16,7 +16,7 @@ Adafruit_BMP085 bmp;
 
 #include <JeVe_EasyOTA.h>  // https://github.com/jeroenvermeulen/JeVe_EasyOTA/blob/master/JeVe_EasyOTA.h
 
-#define ARDUINO_HOSTNAME "ota-wemos-caldera"
+#define ARDUINO_HOSTNAME "OTA-nodeMCU_Priego-test"
 
 #define MAX_PAGE_LENGTH 1000
 
@@ -31,6 +31,7 @@ long last_blink = millis();
 long data_period = 500;
 long last_data = millis();
 
+CircularBuffer TempData;
 
 float temp, preassure, altitude;
 
@@ -85,7 +86,7 @@ const char * getRootPage(){
                     strPrea + "<br>" +
                     strAlt;
 
- 
+
   int sec = millis() / 1000;
   int min = sec / 60;
   int hr = min / 60;
@@ -103,20 +104,20 @@ const char * getRootPage(){
   <body>\
     %s\
     <p>Uptime: %02d:%02d:%02d</p>\
+    <p>Medidas: %d</p>\
     <img src=\"/test.svg\" />\
   </body>\
 </html>",
 
-    strTitle.c_str(),strBody.c_str(),hr, min % 60, sec % 60
+    strTitle.c_str(),strBody.c_str(),hr, min % 60, sec % 60,TempData.historicalCount
   );
 
   return pageBuffer;
 }
 
 
-CircularBuffer TempData;
 
-void drawGraph() {
+String getChart(CircularBuffer *data,String strColor){
   String out = "";
   char temp[100];
   int iWidth = 400 ;
@@ -125,19 +126,24 @@ void drawGraph() {
   sprintf(temp , "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" width=\"%d\" height=\"%d\">\n",iWidth,iHeight);
   out += temp;
   sprintf(temp , "<rect width=\"%d\" height=\"%d\" fill=\"rgb(250, 230, 210)\" stroke-width=\"1\" stroke=\"rgb(0, 0, 0)\" />\n",iWidth,iHeight);
-  out += temp; 
-  out += "<g stroke=\"black\">\n";
-  int y = map(TempData.getValue(0),TempData.minValue,TempData.maxValue,0,iHeight - 10);
-  int step = ( iWidth - 2 * iMargin ) / NData ;
-  for (int x = iMargin, i = 0; x <= iWidth - iMargin; x += step, i++) {
-    int y2 = map(TempData.getValue(i),TempData.minValue,TempData.maxValue,0,iHeight - iMargin);
-    sprintf(temp, "<line x1=\"%d\" y1=\"%d\" x2=\"%d\" y2=\"%d\" stroke-width=\"1\" />\n", x, iHeight - y, x + iMargin, iHeight - y2);
+  out += temp;
+  out += "<g stroke=\""+strColor+"\">\n";
+  int y = map(data->getValue(0),data->getMinimum(),data->getMaximum(),0,iHeight - iMargin) + iMargin / 2 ;
+  float step = ( iWidth - 2.0 * iMargin ) / data->NData ;
+  for (float x = iMargin, i = 1; i < data->NData; x += step, i++) {
+    int y2 = map(data->getValue(i),data->minValue,data->maxValue,0,iHeight - iMargin) + iMargin / 2 ;
+    sprintf(temp, "<line x1=\"%d\" y1=\"%d\" x2=\"%d\" y2=\"%d\" stroke-width=\"1\" />\n", int(x), iHeight - y, int(x + step), iHeight - y2);
     out += temp;
     y = y2;
   }
   out += "</g>\n</svg>\n";
+  return out;
+}
 
-  server.send ( 200, "image/svg+xml", out);
+void drawGraph() {
+
+
+  server.send ( 200, "image/svg+xml", getChart(&TempData,"blue"));
 }
 
 void handleRoot() {
@@ -166,11 +172,12 @@ void handleNotFound(){
 // Get data from the sensor
 void getData(){
   temp = bmp.readTemperature();
-  TempData.addValue(int(temp*5));
   preassure = bmp.readPressure();
   // Calculate altitude assuming 'standard' barometric
   // pressure of 1013.25 millibar = 101325 Pascal
   altitude =  bmp.readAltitude();
+
+  TempData.addValue(int(temp*5));
 }
 
 // Convert numerical to text data
@@ -188,16 +195,16 @@ void showData(){
 }
 
 void loop() {
-  
+
   // OTA
   OTA.loop();
-  
+
   // Blink
   if(millis()-last_blink>blink_period){
     digitalWrite(LED_BUILTIN,!digitalRead(LED_BUILTIN));
     last_blink=millis();
   }
-  
+
   // Data
   if(millis()-last_data>data_period){
     digitalWrite(LED_BUILTIN,!digitalRead(LED_BUILTIN));
@@ -210,5 +217,5 @@ void loop() {
 
   // Webserver
   server.handleClient();
-  
+
 }
