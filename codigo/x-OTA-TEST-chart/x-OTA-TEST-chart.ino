@@ -16,9 +16,11 @@
 
 #include <JeVe_EasyOTA.h>  // https://github.com/jeroenvermeulen/JeVe_EasyOTA/blob/master/JeVe_EasyOTA.h
 
-#define ARDUINO_HOSTNAME "OTA-nodeMCU_Priego-test"
+#define ARDUINO_HOSTNAME "OTA-wemos_bateria-test"
 
 #define MAX_PAGE_LENGTH 1000
+
+#define LED_INFO LED_BUILTIN
 
 ESP8266WebServer server(80);
 
@@ -53,12 +55,12 @@ void setup() {
   // definimos el periodo de parpadeo
   blink_period=random(100,1000);
 
-  pinMode(LED_BUILTIN,OUTPUT);
+  pinMode(LED_INFO,OUTPUT);
 /*
   if (!bmp.begin()) {
     Serial.println("Could not find BMP180 or BMP085 sensor at 0x77");
     while (1) {
-      digitalWrite(LED_BUILTIN,!digitalRead(LED_BUILTIN));
+      digitalWrite(LED_INFO,!digitalRead(LED_INFO));
       Serial.println("Could not find BMP180 or BMP085 sensor at 0x77");
       delay(50);
      }
@@ -148,13 +150,13 @@ void drawGraph() {
 }
 
 void handleRoot() {
-  digitalWrite(LED_BUILTIN, HIGH);
+  digitalWrite(LED_INFO, HIGH);
   server.send(200, "text/HTML", getRootPage());
-  digitalWrite(LED_BUILTIN, LOW);
+  digitalWrite(LED_INFO, LOW);
 }
 
 void handleNotFound(){
-  digitalWrite(LED_BUILTIN, HIGH);
+  digitalWrite(LED_INFO, HIGH);
   String message = "File Not Found\n\n";
   message += "URI: ";
   message += server.uri();
@@ -167,7 +169,7 @@ void handleNotFound(){
     message += " " + server.argName(i) + ": " + server.arg(i) + "\n";
   }
   server.send(404, "text/HTML", message);
-    digitalWrite(LED_BUILTIN, LOW);
+    digitalWrite(LED_INFO, LOW);
 }
 
 // Get data from the sensor
@@ -207,18 +209,18 @@ void loop() {
   
   // Blink
   if(millis()-last_blink>blink_period){
-    digitalWrite(LED_BUILTIN,!digitalRead(LED_BUILTIN));
+    digitalWrite(LED_INFO,!digitalRead(LED_INFO));
     last_blink=millis();
   }
   
   // Data
   if(millis()-last_data>data_period){
-    digitalWrite(LED_BUILTIN,!digitalRead(LED_BUILTIN));
+    digitalWrite(LED_INFO,!digitalRead(LED_INFO));
     getData();
     formatData();
     showData();
     last_data=millis();
-    digitalWrite(LED_BUILTIN,!digitalRead(LED_BUILTIN));
+    digitalWrite(LED_INFO,!digitalRead(LED_INFO));
   }
 
   // Webserver
