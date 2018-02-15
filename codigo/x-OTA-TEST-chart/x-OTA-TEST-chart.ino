@@ -15,7 +15,12 @@
 
 
 #include <JeVe_EasyOTA.h>  // https://github.com/jeroenvermeulen/JeVe_EasyOTA/blob/master/JeVe_EasyOTA.h
-
+/* Direcciones mDSN
+http://ota-nodemcu_priego-test.local/
+http://ota-wemos-caldera.local/
+http://ota-wemos_bateria-test.local/
+http://ota-nodemcu_malo-test.local/
+*/
 #define ARDUINO_HOSTNAME "OTA-wemos_bateria-test"
 
 #define MAX_PAGE_LENGTH 1000
@@ -88,7 +93,7 @@ const char * getRootPage(){
                     strPrea + "<br>" +
                     strAlt;
 
- 
+
   int sec = millis() / 1000;
   int min = sec / 60;
   int hr = min / 60;
@@ -129,7 +134,7 @@ String getChart(CircularBuffer *data,String strColor){
   sprintf(temp , "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" width=\"%d\" height=\"%d\">\n",iWidth,iHeight);
   out += temp;
   sprintf(temp , "<rect width=\"%d\" height=\"%d\" fill=\"rgb(250, 230, 210)\" stroke-width=\"1\" stroke=\"rgb(0, 0, 0)\" />\n",iWidth,iHeight);
-  out += temp; 
+  out += temp;
   out += "<g stroke=\""+strColor+"\">\n";
   int y = map(data->getValue(0),data->getMinimum(),data->getMaximum(),0,iHeight - iMargin) + iMargin / 2 ;
   float step = ( iWidth - 2.0 * iMargin ) / data->NData ;
@@ -144,7 +149,7 @@ String getChart(CircularBuffer *data,String strColor){
 }
 
 void drawGraph() {
-  
+
 
   server.send ( 200, "image/svg+xml", getChart(&TempData,"blue"));
 }
@@ -175,7 +180,7 @@ void handleNotFound(){
 // Get data from the sensor
 void getData(){
 /*  temp = bmp.readTemperature();
-  
+
   preassure = bmp.readPressure();
   // Calculate altitude assuming 'standard' barometric
   // pressure of 1013.25 millibar = 101325 Pascal
@@ -203,16 +208,16 @@ void showData(){
 }
 
 void loop() {
-  
+
   // OTA
   OTA.loop();
-  
+
   // Blink
   if(millis()-last_blink>blink_period){
     digitalWrite(LED_INFO,!digitalRead(LED_INFO));
     last_blink=millis();
   }
-  
+
   // Data
   if(millis()-last_data>data_period){
     digitalWrite(LED_INFO,!digitalRead(LED_INFO));
@@ -225,5 +230,5 @@ void loop() {
 
   // Webserver
   server.handleClient();
-  
+
 }
