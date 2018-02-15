@@ -1,35 +1,46 @@
-
-#define NData 40
+// V1
+#define NMaxSize 400
 
 struct CircularBuffer{
-  int data[NData];
-  int index=0;
-  int maxValue=-32678;
-  int minValue=32677;
-  
+  int data[NMaxSize];
+  int NData = 0;
+  int index = 0;
+
+  int maxValue = -32678;
+  int minValue = 32677;
+  long historicalCount = 0;
+
   void addValue(int iValue){
-    bool bRecalculateMin = false;
-    bool bRecalculateMax = false;
-    if ( data[index] == minValue ) bRecalculateMin = true;
-    if ( data[index] == maxValue ) bRecalculateMax = true;
+
     data[index] = iValue;
-    index = ( index + 1 ) % NData ;
-    if(maxValue<iValue) maxValue = iValue;
-    else if (bRecalculateMax ) {
-      for( int i = 0 ; i<NData ; i++ ){
-        if(maxValue<data[i]) maxValue = data[i];
-      }
-    }
-    if(minValue>iValue) minValue = iValue;
-    else if (bRecalculateMin ) {
-      for( int i = 0 ; i<NData ; i++ ){
-        if(minValue>data[i]) minValue = data[i];
-      }
-    }
+
+    index = ( index + 1 ) % NMaxSize ;
+
+    if ( NData < NMaxSize ) NData = ( NData + 1 ) ;
+
+    historicalCount ++ ;
   }
 
-  
-  
+  int getValue(int i){
+    return data[ ( index + i ) % NData ] ;
+  }
+
+  int getMinimum(){
+    minValue = getValue(0);
+
+    for( int i = 1 ; i<NData ; i++ ) minValue = min(minValue, getValue(i) );
+
+    return minValue ;
+  }
+
+  int getMaximum(){
+    maxValue = getValue(0);
+
+    for( int i = 1 ; i<NData ; i++ ) maxValue = max(maxValue, getValue(i) );
+
+    return maxValue;
+  }
+
   float getAverage(){
     float sum = 0;
     for( int i = 0 ; i<NData ; i++ ){
@@ -37,8 +48,6 @@ struct CircularBuffer{
     }
     return sum/NData;
   }
-  
-  int getValue(int i){
-    return data[ ( index + i ) % NData ] ;
-  }
+
+
 };
