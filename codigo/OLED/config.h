@@ -1,2 +1,2 @@
-const char ssid[] = "jazzBajo";  //  your network SSID (name)
-const char pass[] = "qazxcvbgtrewsdf";       // your network password
+const char ssid[] = "XXX";  //  your network SSID (name)
+const char pass[] = "XXX";       // your network password
