@@ -1,2 +1,3 @@
- char* ssid = "XXXX";
- char* password = "XXXX";
+ //char* ssid = "OpenWrt";
+ char* ssid = "jazzBajo";
+ char* password = "qazxcvbgtrewsdf";
