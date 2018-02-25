@@ -5,8 +5,8 @@
 
 #include <ESP8266WiFi.h>
 
-const char* ssid = "OpenWrt";
-const char* password = "qazxcvbgtrewsdf";
+const char* ssid = "XXXX";
+const char* password = "XXXX";
 
 // Create an instance of the server
 // specify the port to listen on as an argument
@@ -19,22 +19,22 @@ void setup() {
   // prepare GPIO2
   pinMode(2, OUTPUT);
   digitalWrite(2, 0);
-  
+
   // Connect to WiFi network
   Serial.println();
   Serial.println();
   Serial.print("Connecting to ");
   Serial.println(ssid);
-  
+
   WiFi.begin(ssid, password);
-  
+
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
   Serial.println("");
   Serial.println("WiFi connected");
-  
+
   // Start the server
   server.begin();
   Serial.println("Server started");
@@ -49,7 +49,7 @@ void setup() {
 
   digitalWrite(5, 0);
   digitalWrite(4, 0);
-  
+
   digitalWrite(0, 1);
   digitalWrite(2, 1);
 }
@@ -64,18 +64,18 @@ void loop() {
     digitalWrite(2, 1);
     return;
   }
-  
+
   // Wait until the client sends some data
   Serial.println("new client");
   while(!client.available()){
     delay(1);
   }
-  
+
   // Read the first line of the request
   String req = client.readStringUntil('\r');
   Serial.println(req);
   client.flush();
-  
+
   // Match the request
   int motorASpeed = 1023;
   int motorBSpeed = 1023;
@@ -100,7 +100,7 @@ void loop() {
       motorBForward = 0;
     } else {
       motorBForward = 1;
-    }    
+    }
     analogWrite(5, abs(left));
     analogWrite(4, abs(right));
     digitalWrite(0, motorAForward);
@@ -122,9 +122,9 @@ void loop() {
     digitalWrite(0, 1);
     digitalWrite(2, 1);
     return;
-  } 
+  }
 
-  
+
   client.flush();
 
   // Prepare the response
@@ -136,7 +136,6 @@ void loop() {
   delay(1);
   Serial.println("Client disonnected");
   delay(200);
-  // The client will actually be disconnected 
+  // The client will actually be disconnected
   // when the function returns and 'client' object is detroyed
 }
-
