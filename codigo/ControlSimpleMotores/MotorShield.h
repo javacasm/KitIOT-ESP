@@ -7,16 +7,5 @@
     D4 DIRB (Motor B) D4  2 Direction
 
  */
-#define SPEED_MOTOR_A D1
-#define DIR_MOTOR_A   D3
-#define SPEED_MOTOR_B D2
-#define DIR_MOTOR_B   D4
-
-#define MAX_SPEED 1023
-#define MIN_SPEED 0
-
-void right();
-void left();
-void forward();
-void backward();
-void stop();
+#define RELE_1 D0
+#define RELE_2 D1
