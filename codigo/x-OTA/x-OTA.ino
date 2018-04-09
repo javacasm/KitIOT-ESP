@@ -6,11 +6,9 @@
 #include <JeVe_EasyOTA.h>  // https://github.com/jeroenvermeulen/JeVe_EasyOTA/blob/master/JeVe_EasyOTA.h
 
 
-#define ARDUINO_HOSTNAME "ota-wemos-caldera"
+#define ARDUINO_HOSTNAME "OTA-nodeMCU_robot_chasis"
 
 
-extern  char* ssid;
-extern  char* password;
 
 
 long blink_period;
