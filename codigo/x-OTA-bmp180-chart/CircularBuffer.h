@@ -1,5 +1,9 @@
 // V1
+#ifndef _CIRCULAR_BUFFER_H_
+#define _CIRCULAR_BUFFER_H_
+
 #define NMaxSize 400
+#include <Arduino.h>
 
 struct CircularBuffer{
   int data[NMaxSize];
@@ -51,3 +55,5 @@ struct CircularBuffer{
 
 
 };
+
+#endif
