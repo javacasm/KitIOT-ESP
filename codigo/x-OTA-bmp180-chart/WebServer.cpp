@@ -36,6 +36,8 @@ const char * getRootPage(){
   </head>\
   <body>\
     %s\
+    <br><a href=\"https://github.com/javacasm/Teleco_IOT/\">Codigo</a>\
+    <br><img src=\"https://github.com/javacasm/Teleco_IOT/blob/master/images/Licencia_CC_peque.png?raw=true\">\
     <p>Uptime: %02d:%02d:%02d</p>\
     <p>Medidas: %d</p>\
     <img src=\"/test.svg\" />\
@@ -112,12 +114,6 @@ void setup_webserver(){
   server.begin();
   Serial.println("HTTP server started");
 }
-
-
-
-
-
-
 
 
 void loop_webserver(){
