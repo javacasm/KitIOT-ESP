@@ -7,7 +7,7 @@
 * Via I2C
 * 3 hardware address pins addressing
 * ¿PCF8591 I2C bus speed sampling rate decided?
-* 4 canalas analógicos single-ended or differential input
+* 4 canales analógicos single-ended or differential input
 * ¿Automatic incremental channel selection?
 * Rango analógico entre VSS y VDD
 * Track-and-hold circuit
