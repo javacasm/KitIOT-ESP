@@ -1,3 +1,5 @@
 # OTA
 
-[Libreria EasyOTA](https://github.com/jeroenvermeulen/JeVe_EasyOTA?utm_content=buffer99dcf&utm_medium=social&utm_source=twitter.com&utm_campaign=buffer)
+[Libreria EasyOTA](https://github.com/jeroenvermeulen/JeVe_EasyOTA)
+
+[Problemas con la deteccion del puerto OTA](https://github.com/esp8266/Arduino/issues/4212)
