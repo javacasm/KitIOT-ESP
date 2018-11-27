@@ -72,6 +72,21 @@ void handleNotFound(){
     digitalWrite(LED_BUILTIN, LOW);
 }
 
+String acercaDe(){
+  return "<html>\
+  <head>\
+    <meta http-equiv='refresh' content='1'/>\
+    <title>AcercaDe</title>\
+    <style>\
+      body { background-color: #aaaaaa; font-family:  Arial, Helvetica, Sans-Serif; font-size: 50px; Color: #011188; }\
+    </style>\
+  </head>\
+  <body>\
+    <br><a href=\"https://github.com/javacasm/Teleco_IOT/\">Codigo</a>\
+    <br>Ejemplo de codigo HTML para nodeMCU\
+  </body>\
+</html>";
+}
 
 
 
@@ -105,6 +120,7 @@ void drawGraph() {
 void setup_webserver(){
   server.on("/",  handleRoot);
   server.on("/test.svg", drawGraph );
+  server.on("/about",acercaDe);
   server.on("/inline", [](){
     server.send(200, "text/plain", getRootPage());
   });
